@@ -1,0 +1,67 @@
+//
+//  MediaGatewayTests.swift
+//  MarvelTests
+//
+//  Created by MACBOOK on 21/05/2021.
+//
+
+import Foundation
+@testable import Marvel
+@testable import Promises
+import XCTest
+
+final class MediaGatewayTests: XCTestCase {
+    var apiClientSpy: APIClientSpy<Media>!
+    var mediaGateway: MediaGateway!
+
+    override func setUp() {
+        apiClientSpy = .init()
+        mediaGateway = APIMarvelMediaGateway(apiClient: apiClientSpy)
+    }
+
+    override func tearDown() {
+        apiClientSpy = nil
+        mediaGateway = nil
+        super.tearDown()
+    }
+
+    func testLoadMediaWithSuccess() {
+        // Given
+        let results = Media.items()
+        let paginator = Paginator.value(results: results)
+        let parameter = MarvelParameter(MediaParameter(id: 1, type: .comics))
+        apiClientSpy.promise = .init { MarvelResponse(data: paginator) }
+
+        // When
+        let promise = mediaGateway.loadMediaItems(with: parameter)
+
+        // Then
+
+        XCTAssert(waitForPromises(timeout: 10.0))
+        XCTAssertEqual(apiClientSpy.request.path, "characters/\(parameter.value.id)/\(parameter.value.type.rawValue)")
+        XCTAssertEqual(apiClientSpy.request.method, .get)
+        XCTAssertEqual(
+            apiClientSpy.request.urlParameters,
+            try? MarvelParameter(parameter).encoded()
+        )
+        XCTAssertEqual(promise.value, paginator)
+        XCTAssertNil(promise.error)
+    }
+
+    func testLoadMediaWithFailure() {
+        // Given
+        let error = MarvelError.general
+        let parameter = MarvelParameter(MediaParameter(id: 1, type: .comics))
+        apiClientSpy.promise = .init { MarvelResponse<Media>(message: error.message) }
+
+        // When
+        let promise = mediaGateway.loadMediaItems(with: parameter)
+
+        // Then
+
+        XCTAssert(waitForPromises(timeout: 10.0))
+
+        XCTAssertNil(promise.value)
+        XCTAssertEqual(promise.error as? MarvelError, error)
+    }
+}

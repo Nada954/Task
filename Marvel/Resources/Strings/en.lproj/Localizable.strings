@@ -1,0 +1,19 @@
+/* 
+  Localizable.strings
+  Marvel
+
+ Created by MACBOOK on 21/05/2021.
+*/
+
+"search.title" = "Search";
+"state.empty" = "No Results Found!";
+"state.error" = "Ooops!";
+"error.general" = "Something went wrong.\nPlease try again later";
+"error.decode" = "Failed to decode response.";
+"common.notAvailable" = "Not Available.";
+"character.comics" = "Comics";
+"character.series" = "Series";
+"character.stories" = "Stories";
+"character.events" = "Events";
+"character.name" = "Name";
+"character.description" = "Description";

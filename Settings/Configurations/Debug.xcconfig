@@ -1,0 +1,8 @@
+//
+//  Debug.xcconfig
+//  Marvel
+//
+//  Created by MACBOOK on 21/05/2021.
+//
+
+#include "Settings/Configurations/Default.xcconfig"
